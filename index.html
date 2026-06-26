@@ -51,6 +51,42 @@ td:first-child { font-weight: 500; }
 td:nth-child(2) { text-align: center; color: #666; white-space: nowrap; }
 .vazio { padding: 50px 20px; text-align: center; color: #888; display: none; }
 mark { background: #fff176; border-radius: 2px; padding: 0 1px; }
+
+/* ===== ADMIN ===== */
+.adm-ov{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;display:none;align-items:center;justify-content:center;}
+.adm-ov.open{display:flex;}
+.adm-box{background:white;border-radius:14px;padding:26px 22px;width:93%;max-width:420px;max-height:90vh;overflow-y:auto;}
+.adm-box h2{font-size:17px;color:#7a1020;margin-bottom:18px;}
+.af{margin-bottom:13px;}
+.af label{display:block;font-size:11px;font-weight:700;color:#888;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;}
+.af input,.af select,.af textarea{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;}
+.af textarea{height:65px;resize:vertical;}
+.ab{width:100%;padding:11px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;}
+.ab.pri{background:#7a1020;color:white;}
+.ab.sec{background:#f0ece4;color:#333;}
+.ab.red{background:#c0392b;color:white;}
+.ab:disabled{opacity:.5;cursor:not-allowed;}
+#adm-panel{position:fixed;inset:0;background:#f5f2ee;z-index:1500;overflow-y:auto;display:none;}
+#adm-panel.open{display:block;}
+.ap-header{background:#7a1020;color:white;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.ap-header h1{font-size:16px;}
+.ap-acts{display:flex;gap:7px;}
+.aib{background:rgba(255,255,255,.2);border:none;color:white;padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;}
+.ap-list{padding:12px;}
+.ap-item{background:white;border-radius:8px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.ap-info{flex:1;}
+.ap-name{font-weight:600;font-size:14px;}
+.ap-cat{font-size:11px;color:#888;margin-top:2px;}
+.ap-btns{display:flex;gap:5px;}
+.ae-btn{padding:5px 11px;border:none;border-radius:6px;background:#e8f0fe;color:#1a4fa0;font-size:12px;cursor:pointer;}
+.mat-row{display:flex;gap:5px;margin-bottom:5px;align-items:center;}
+.mat-row input{padding:7px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;box-sizing:border-box;}
+.mat-row input:nth-child(1){flex:1;}
+.mat-row input:nth-child(2){flex:0 0 48px;}
+.mat-row input:nth-child(3){flex:0 0 80px;}
+.mat-del{background:#fce8e6;border:none;color:#8b1a1a;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:13px;}
+.ap-pub{position:fixed;bottom:0;left:0;right:0;background:white;padding:11px 15px;box-shadow:0 -2px 8px rgba(0,0,0,.12);display:none;z-index:1600;}
+#adm-panel.open~.ap-pub{display:block;}
 </style>
 </head>
 <body>
@@ -74,6 +110,86 @@ mark { background: #fff176; border-radius: 2px; padding: 0 1px; }
 <div class="res-info" id="res-info"></div>
 <main id="main"></main>
 <div class="vazio" id="vazio">Nenhum produto encontrado.</div>
+
+<!-- ADMIN: login -->
+<div class="adm-ov" id="adm-login">
+  <div class="adm-box">
+    <h2>🔒 Acesso Restrito</h2>
+    <div class="af"><label>Usuário</label><input type="text" id="al-user" placeholder="admin" autocomplete="off"></div>
+    <div class="af"><label>Senha</label><input type="password" id="al-pass" placeholder="••••"></div>
+    <div id="al-err" style="color:#c0392b;font-size:13px;margin-bottom:6px;display:none;">Usuário ou senha incorretos.</div>
+    <button class="ab pri" onclick="admLogin()">Entrar</button>
+    <button class="ab sec" onclick="document.getElementById('adm-login').className='adm-ov'">Cancelar</button>
+  </div>
+</div>
+
+<!-- ADMIN: edit product modal -->
+<div class="adm-ov" id="adm-edit">
+  <div class="adm-box" style="max-width:500px;width:96%">
+    <h2 id="ae-title">Editar Produto</h2>
+    <div class="af"><label>Nome</label><input type="text" id="ae-nome"></div>
+    <div class="af"><label>Categoria</label>
+      <select id="ae-cat">
+        <option value="ajuste">Ajustes de Sela</option><option value="almofada">Almofadas de Ligar</option>
+        <option value="barrigueira">Barrigueiras</option><option value="boleteira">Boleteiras</option>
+        <option value="bolsa">Bolsas / Mochilas / Pochete</option><option value="cabresto">Cabrestos</option>
+        <option value="capa">Capas / Capuzes / Caneleira</option><option value="cloche">Cloches</option>
+        <option value="ice">Ices</option><option value="joelheira">Joelheiras</option>
+        <option value="liga">Ligas</option><option value="manta">Mantas</option>
+        <option value="protetor">Protetores / Peiteiras / Pescoceiras</option>
+        <option value="skid">Skid Boots / Splint Boots</option><option value="outros">Outros</option>
+      </select>
+    </div>
+    <div class="af"><label>Tamanho / Tipo</label><input type="text" id="ae-tam"></div>
+    <div class="af"><label>Cores disponíveis</label><input type="text" id="ae-cor"></div>
+    <div class="af"><label>Observação</label><textarea id="ae-obs"></textarea></div>
+    <div class="af">
+      <label>Foto (cole a URL da imagem)</label>
+      <input type="text" id="ae-foto" placeholder="https://... ou fotos/nome-do-produto.jpg">
+      <div id="ae-foto-preview" style="margin-top:8px;display:none"><img id="ae-foto-img" style="width:100%;border-radius:6px;border:1px solid #ddd"></div>
+    </div>
+    <div class="af">
+      <label>Matéria Prima</label>
+      <div style="display:flex;gap:5px;margin-bottom:4px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase">
+        <span style="flex:1">Material</span><span style="flex:0 0 48px;text-align:center">Qtd</span><span style="flex:0 0 80px;text-align:center">Medida</span><span style="width:30px"></span>
+      </div>
+      <div id="ae-mats"></div>
+      <button class="ab sec" onclick="admAddMat()" style="font-size:12px;padding:7px;margin-top:4px">+ Adicionar material</button>
+    </div>
+    <button class="ab pri" onclick="admSave()">Salvar</button>
+    <button class="ab sec" onclick="document.getElementById('adm-edit').className='adm-ov'">Cancelar</button>
+    <button class="ab red" id="ae-del" onclick="admDelete()" style="display:none">Excluir Produto</button>
+  </div>
+</div>
+
+<!-- ADMIN: settings modal -->
+<div class="adm-ov" id="adm-cfg">
+  <div class="adm-box">
+    <h2>⚙️ Configurações de Publicação</h2>
+    <div class="af"><label>GitHub Token (com permissão contents:write)</label><input type="password" id="cfg-tok" placeholder="github_pat_..."></div>
+    <div class="af"><label>Usuário GitHub</label><input type="text" id="cfg-own" value="MarcoReisJr22"></div>
+    <div class="af"><label>Repositório</label><input type="text" id="cfg-rep" value="ref-interno-prod"></div>
+    <button class="ab pri" onclick="admSaveCfg()">Salvar</button>
+    <button class="ab sec" onclick="document.getElementById('adm-cfg').className='adm-ov'">Cancelar</button>
+  </div>
+</div>
+
+<!-- ADMIN: panel -->
+<div id="adm-panel">
+  <div class="ap-header">
+    <h1>⚙️ Admin — Guia de Corte</h1>
+    <div class="ap-acts">
+      <button class="aib" onclick="admNew()">+ Produto</button>
+      <button class="aib" onclick="admOpenCfg()">Configurar</button>
+      <button class="aib" onclick="document.getElementById('adm-panel').className=''">✕ Fechar</button>
+    </div>
+  </div>
+  <div class="ap-list" id="ap-list"></div>
+  <div style="height:68px"></div>
+</div>
+<div class="ap-pub">
+  <button class="ab pri" id="pub-btn" onclick="admPublish()">🚀 Publicar Alterações</button>
+</div>
 
 <script>
 var CATS = {
@@ -419,6 +535,167 @@ for (var i = 0; i < catLabels.length; i++) {
 }
 
 render("todas", "");
+
+// ========== ADMIN ==========
+var _admIdx = -1;
+var _logoClicks = 0, _logoTimer = null;
+
+document.querySelector(".logo").addEventListener("click", function(){
+  _logoClicks++;
+  clearTimeout(_logoTimer);
+  _logoTimer = setTimeout(function(){ _logoClicks = 0; }, 2000);
+  if (_logoClicks >= 5) { _logoClicks = 0; document.getElementById("adm-login").className = "adm-ov open"; document.getElementById("al-user").value=""; document.getElementById("al-pass").value=""; document.getElementById("al-err").style.display="none"; }
+});
+
+function admLogin(){
+  if (document.getElementById("al-user").value==="admin" && document.getElementById("al-pass").value==="1234") {
+    document.getElementById("adm-login").className="adm-ov";
+    document.getElementById("adm-panel").className="open";
+    admRenderList();
+  } else { document.getElementById("al-err").style.display="block"; }
+}
+
+function admRenderList(){
+  var el = document.getElementById("ap-list");
+  el.innerHTML = "";
+  for (var i=0;i<P.length;i++){
+    (function(idx){
+      var p = P[idx];
+      var d = document.createElement("div");
+      d.className = "ap-item";
+      d.innerHTML = "<div class='ap-info'><div class='ap-name'>"+p.n+"</div><div class='ap-cat'>"+(CATS[p.c]||p.c)+(p.f?" · 📷":"")+"</div></div><div class='ap-btns'><button class='ae-btn' onclick='admEdit("+idx+")'>Editar</button></div>";
+      el.appendChild(d);
+    })(i);
+  }
+}
+
+function admEdit(idx){
+  _admIdx = idx;
+  var p = P[idx];
+  document.getElementById("ae-title").textContent = "Editar: "+p.n;
+  document.getElementById("ae-nome").value = p.n;
+  document.getElementById("ae-cat").value = p.c;
+  document.getElementById("ae-tam").value = p.t||"";
+  document.getElementById("ae-cor").value = p.cor||"";
+  document.getElementById("ae-obs").value = p.o||"";
+  document.getElementById("ae-foto").value = p.f||"";
+  admFotoPreview(p.f||"");
+  document.getElementById("ae-del").style.display = "block";
+  admRenderMats(p.m||[]);
+  document.getElementById("adm-edit").className="adm-ov open";
+}
+
+function admNew(){
+  _admIdx = -1;
+  document.getElementById("ae-title").textContent = "Novo Produto";
+  document.getElementById("ae-nome").value=""; document.getElementById("ae-cat").value="outros";
+  document.getElementById("ae-tam").value=""; document.getElementById("ae-cor").value="";
+  document.getElementById("ae-obs").value=""; document.getElementById("ae-foto").value="";
+  document.getElementById("ae-foto-preview").style.display="none";
+  document.getElementById("ae-del").style.display="none";
+  admRenderMats([["","",""]]);
+  document.getElementById("adm-edit").className="adm-ov open";
+}
+
+document.getElementById("ae-foto").addEventListener("input", function(){ admFotoPreview(this.value); });
+
+function admFotoPreview(url){
+  var pv = document.getElementById("ae-foto-preview");
+  var img = document.getElementById("ae-foto-img");
+  if (url && url.trim()) {
+    var src = url.trim();
+    if (src.indexOf("http") !== 0) { var cfg=admGetCfg(); src="https://"+cfg.owner+".github.io/"+cfg.repo+"/"+src; }
+    img.src = src;
+    pv.style.display = "block";
+    img.onerror = function(){ pv.style.display="none"; };
+    img.onload = function(){ pv.style.display="block"; };
+  } else { pv.style.display="none"; }
+}
+
+function admRenderMats(mats){
+  var el = document.getElementById("ae-mats");
+  el.innerHTML = "";
+  for (var i=0;i<mats.length;i++) admAddMatRow(mats[i][0],mats[i][1],mats[i][2]);
+}
+function admAddMat(){ admAddMatRow("","",""); }
+function admAddMatRow(m,q,med){
+  var el = document.getElementById("ae-mats");
+  var r = document.createElement("div");
+  r.className = "mat-row";
+  r.innerHTML = "<input type='text' placeholder='Material' value='"+esc(m)+"'><input type='text' placeholder='Qtd' value='"+esc(q)+"'><input type='text' placeholder='Medida' value='"+esc(med)+"'><button class='mat-del' onclick='this.parentElement.remove()'>✕</button>";
+  el.appendChild(r);
+}
+function esc(s){ return (s||"").replace(/'/g,"&#39;").replace(/"/g,"&quot;"); }
+
+function admSave(){
+  var nome = document.getElementById("ae-nome").value.trim();
+  if (!nome){ alert("Informe o nome do produto."); return; }
+  var rows = document.querySelectorAll("#ae-mats .mat-row");
+  var mats = [];
+  for (var i=0;i<rows.length;i++){
+    var ins = rows[i].querySelectorAll("input");
+    if (ins[0].value.trim()) mats.push([ins[0].value.trim(), ins[1].value.trim(), ins[2].value.trim()]);
+  }
+  var prod = { c:document.getElementById("ae-cat").value, n:nome, t:document.getElementById("ae-tam").value.trim(), cor:document.getElementById("ae-cor").value.trim(), o:document.getElementById("ae-obs").value.trim(), f:document.getElementById("ae-foto").value.trim(), m:mats };
+  if (_admIdx >= 0) P[_admIdx]=prod; else P.push(prod);
+  document.getElementById("adm-edit").className="adm-ov";
+  admRenderList();
+  render(catAtiva, buscaAtual);
+}
+
+function admDelete(){
+  if (!confirm("Excluir \""+P[_admIdx].n+"\"?")) return;
+  P.splice(_admIdx,1);
+  document.getElementById("adm-edit").className="adm-ov";
+  admRenderList();
+  render(catAtiva, buscaAtual);
+}
+
+// Settings
+function admGetCfg(){ try{ return JSON.parse(localStorage.getItem("admcfg"))||{}; }catch(e){ return {}; } }
+function admOpenCfg(){
+  var c = admGetCfg();
+  document.getElementById("cfg-tok").value = c.token||"";
+  document.getElementById("cfg-own").value = c.owner||"MarcoReisJr22";
+  document.getElementById("cfg-rep").value = c.repo||"ref-interno-prod";
+  document.getElementById("adm-cfg").className="adm-ov open";
+}
+function admSaveCfg(){
+  localStorage.setItem("admcfg", JSON.stringify({ token:document.getElementById("cfg-tok").value.trim(), owner:document.getElementById("cfg-own").value.trim(), repo:document.getElementById("cfg-rep").value.trim() }));
+  document.getElementById("adm-cfg").className="adm-ov";
+  alert("Salvo!");
+}
+
+// Publish via GitHub API
+function admPublish(){
+  var cfg = admGetCfg();
+  if (!cfg.token){ alert("Configure o GitHub Token primeiro (botão Configurar)."); admOpenCfg(); return; }
+  var btn = document.getElementById("pub-btn");
+  btn.textContent = "⏳ Publicando..."; btn.disabled = true;
+  var owner = cfg.owner||"MarcoReisJr22", repo = cfg.repo||"ref-interno-prod", token = cfg.token;
+  fetch("https://api.github.com/repos/"+owner+"/"+repo+"/contents/index.html",
+    { headers:{ "Authorization":"Bearer "+token, "Accept":"application/vnd.github.v3+json" } })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if (!data.sha) throw new Error(data.message||"Arquivo não encontrado no repositório.");
+    var currentHtml = decodeURIComponent(escape(atob(data.content.replace(/\n/g,""))));
+    var newP = "var P = "+JSON.stringify(P)+";";
+    var newHtml = currentHtml.replace(/var P = \[[\s\S]*?\];/, newP);
+    if (newHtml === currentHtml) throw new Error("Não foi possível localizar os dados no arquivo. Contate o suporte.");
+    var encoded = btoa(unescape(encodeURIComponent(newHtml)));
+    return fetch("https://api.github.com/repos/"+owner+"/"+repo+"/contents/index.html",{
+      method:"PUT",
+      headers:{ "Authorization":"Bearer "+token, "Accept":"application/vnd.github.v3+json", "Content-Type":"application/json" },
+      body:JSON.stringify({ message:"Atualiza guia via admin", content:encoded, sha:data.sha })
+    });
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if (data.content){ btn.textContent = "✅ Publicado! Atualiza em ~1 min"; setTimeout(function(){ btn.textContent="🚀 Publicar Alterações"; btn.disabled=false; },4000); }
+    else throw new Error(data.message||JSON.stringify(data));
+  })
+  .catch(function(e){ btn.textContent="🚀 Publicar Alterações"; btn.disabled=false; alert("Erro ao publicar:\n"+e.message); });
+}
 </script>
 </body>
 </html>
